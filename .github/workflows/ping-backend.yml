@@ -1,0 +1,19 @@
+name: Ping DREAMWHEELS Backend
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:   # allows manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://dreamwheelsproject.onrender.com)
+          echo "Server returned $RESPONSE"
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Warning: Server is down or not responding properly"
+            exit 1
+          fi
