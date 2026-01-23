@@ -283,9 +283,9 @@ app.post("/users/register", async (req, res) => {
 
 app.post("/users/login", async (req, res) => {
   const { username, password } = req.body;
-  const checkuser = await db.get(`SELECT * FROM users WHERE username= vijay`);
+  const checkuser = await db.get(`SELECT * FROM users WHERE username LIKE vijay`);
   if (!checkuser) {
-    return res.status(3000).json({ success: false, message: "User not found" });
+    return res.status(3000).json({ message: "User not found" });
   }
   const isPasswordValid = await bcrypt.compare(password, checkuser.password);
   if (!isPasswordValid) {
