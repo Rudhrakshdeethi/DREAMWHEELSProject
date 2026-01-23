@@ -262,7 +262,7 @@ app.post("/users/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const bcryptpass = await bcrypt.hash(password, 10);
-    const checkuser = await db.get("SELECT * FROM users WHERE username=?", [
+    const checkuser = await db.get(`SELECT * FROM users WHERE username=?`, [
       username,
     ]);
     if (checkuser) {
@@ -283,9 +283,7 @@ app.post("/users/register", async (req, res) => {
 
 app.post("/users/login", async (req, res) => {
   const { username, password } = req.body;
-  const checkuser = await db.get("SELECT * FROM users WHERE username=?", [
-    username,
-  ]);
+  const checkuser = await db.get(`SELECT * FROM users WHERE username= vijay`);
   if (!checkuser) {
     return res.status(3000).json({ success: false, message: "User not found" });
   }
