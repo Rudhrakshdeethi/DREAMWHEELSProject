@@ -9,7 +9,14 @@ const bcrypt = require("bcrypt");
 const app = express();
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://dreamwheelsproj.netlify.app/", // exact URL of your deployed frontend
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
 app.use(express.json());
 
 const dbpath = path.join(__dirname, "spinny.db");
