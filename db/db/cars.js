@@ -1,3 +1,6 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const path = require("path");
 const { open } = require("sqlite");
@@ -11,7 +14,7 @@ app.use(express.json());
 
 const dbpath = path.join(__dirname, "spinny.db");
 
-let db; 
+let db;
 
 const initializationDbandServer = async () => {
   db = await open({
@@ -64,10 +67,8 @@ const initializationDbandServer = async () => {
   );`);
   await db.run(createTableQuery);
   console.log("Table created or already exists");
-
-  const port = 8082;
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
   });
 };
 
@@ -82,8 +83,7 @@ const authenticateToken = (req, res, next) => {
   }
 
   token = authHeader.split(" ")[1];
-
-  jwt.verify(token, "secretkey", (err, payload) => {
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, payload) => {
     if (err) {
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
@@ -163,7 +163,7 @@ app.post("/cars", authenticateToken, async (req, res) => {
         JSON.stringify(c.battery_health || {}),
         c.insurance_valid_till,
         JSON.stringify(c.photos || []),
-      ]
+      ],
     );
 
     res.status(201).json({ success: true, id: result.lastID });
@@ -245,7 +245,7 @@ app.post("/cars/bulk", async (req, res) => {
         JSON.stringify(c.battery_health || {}),
         c.insurance_valid_till,
         JSON.stringify(c.photos || []),
-      ])
+      ]),
     );
 
     await Promise.all(insertPromises);
@@ -270,7 +270,7 @@ app.post("/users/register", async (req, res) => {
     } else {
       const result = await db.run(
         "INSERT INTO users (username,email,password) VALUES (?,?,?)",
-        [username, email, bcryptpass]
+        [username, email, bcryptpass],
       );
       res.status(201).json({ success: true, id: result.lastID });
     }
@@ -295,7 +295,7 @@ app.post("/users/login", async (req, res) => {
   }
   if (isPasswordValid === true) {
     const payload = { username: username };
-    const jwt_token = jwt.sign(payload, "secretkey");
+    const jwt_token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
     res.send({ jwt_token: jwt_token });
   }
 });
