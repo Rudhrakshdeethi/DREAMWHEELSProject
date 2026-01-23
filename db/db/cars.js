@@ -14,14 +14,12 @@ app.use(
     origin: "https://dreamwheelsproj.netlify.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
-
 
 app.use(express.json());
 
-const dbpath = path.join("/tmp", "spinny.db");
-
+const dbpath = path.join(__dirname, "spinny.db");
 
 let db;
 
