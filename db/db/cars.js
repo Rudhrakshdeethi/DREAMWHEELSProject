@@ -68,7 +68,7 @@ const initializationDbandServer = async () => {
   await db.run(createTableQuery);
   console.log("Table created or already exists");
 
-  const port = process.env.PORT||8082;
+  const port = process.env.PORT || process.env.SERVER_PORT;
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
