@@ -269,7 +269,7 @@ app.post("/users/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const bcryptpass = await bcrypt.hash(password, 10);
-    const checkuser = await db.get("SELECT * FROM users WHERE username=?", [
+    const checkuser = await db.get(`SELECT * FROM users WHERE username=?`, [
       username,
     ]);
     if (checkuser) {
@@ -287,24 +287,39 @@ app.post("/users/register", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+app.get("/debug/users", async (req, res) => {
+  const users = await db.all("SELECT id, username, email FROM users");
+  res.json(users);
+});
 
 app.post("/users/login", async (req, res) => {
-  const { username, password } = req.body;
-  const checkuser = await db.get("SELECT * FROM users WHERE username=?", [
-    username,
-  ]);
-  if (!checkuser) {
-    return res.status(400).json({ success: false, message: "User not found" });
-  }
-  const isPasswordValid = await bcrypt.compare(password, checkuser.password);
-  if (!isPasswordValid) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid password" });
-  }
-  if (isPasswordValid === true) {
-    const payload = { username: username };
+  try {
+    const { username, password } = req.body;
+
+    const checkuser = await db.get(
+      "SELECT * FROM users WHERE username = ?",
+      [username]
+    );
+
+    if (!checkuser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      checkuser.password
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    const payload = { username };
     const jwt_token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-    res.send({ jwt_token: jwt_token });
+
+    res.status(200).json({ jwt_token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
+
