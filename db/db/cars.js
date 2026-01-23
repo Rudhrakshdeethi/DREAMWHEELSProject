@@ -20,7 +20,8 @@ app.use(
 
 app.use(express.json());
 
-const dbpath = path.join(__dirname, "spinny.db");
+const dbpath = path.join("/tmp", "spinny.db");
+
 
 let db;
 
