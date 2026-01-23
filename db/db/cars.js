@@ -282,20 +282,33 @@ app.post("/users/register", async (req, res) => {
 });
 
 app.post("/users/login", async (req, res) => {
-  const { username, password } = req.body;
-  const checkuser = await db.get(`SELECT * FROM users WHERE username LIKE vijay`);
-  if (!checkuser) {
-    return res.status(3000).json({ message: "User not found" });
-  }
-  const isPasswordValid = await bcrypt.compare(password, checkuser.password);
-  if (!isPasswordValid) {
-    return res
-      .status(3000)
-      .json({ success: false, message: "Invalid password" });
-  }
-  if (isPasswordValid === true) {
-    const payload = { username: username };
+  try {
+    const { username, password } = req.body;
+
+    const checkuser = await db.get(
+      "SELECT * FROM users WHERE username = ?",
+      [username]
+    );
+
+    if (!checkuser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      checkuser.password
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    const payload = { username };
     const jwt_token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-    res.send({ jwt_token: jwt_token });
+
+    res.status(200).json({ jwt_token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
+
