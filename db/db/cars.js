@@ -280,6 +280,10 @@ app.post("/users/register", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+app.get("/debug/users", async (req, res) => {
+  const users = await db.all("SELECT id, username, email FROM users");
+  res.json(users);
+});
 
 app.post("/users/login", async (req, res) => {
   try {
