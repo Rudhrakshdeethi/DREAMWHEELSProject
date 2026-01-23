@@ -1,10 +1,10 @@
 {
   "name": "spinny-api",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "cars.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node cars.js",
+    "dev": "nodemon cars.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
