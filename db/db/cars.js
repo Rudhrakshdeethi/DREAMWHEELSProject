@@ -11,15 +11,17 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 app.use(
   cors({
-    origin: "https://dreamwheelsproj.netlify.app/", // exact URL of your deployed frontend
-    credentials: true,
+    origin: "https://dreamwheelsproj.netlify.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
+
 
 app.use(express.json());
 
-const dbpath = path.join(__dirname, "spinny.db");
+const dbpath = path.join("/tmp", "spinny.db");
+
 
 let db;
 
