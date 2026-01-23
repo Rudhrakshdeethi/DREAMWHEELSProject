@@ -11,11 +11,12 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 app.use(
   cors({
-    origin: "https://dreamwheelsproj.netlify.app/", // exact URL of your deployed frontend
-    credentials: true,
+    origin: "https://dreamwheelsproj.netlify.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
+
 
 app.use(express.json());
 
@@ -75,9 +76,9 @@ const initializationDbandServer = async () => {
   await db.run(createTableQuery);
   console.log("Table created or already exists");
 
-  const port = process.env.PORT || process.env.SERVER_PORT;
+  const port = process.env.PORT || 8082;
   app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server running on port ${port}`);
   });
 };
 
@@ -296,19 +297,15 @@ app.post("/users/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const checkuser = await db.get(
-      "SELECT * FROM users WHERE username = ?",
-      [username]
-    );
+    const checkuser = await db.get("SELECT * FROM users WHERE username = ?", [
+      username,
+    ]);
 
     if (!checkuser) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      checkuser.password
-    );
+    const isPasswordValid = await bcrypt.compare(password, checkuser.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
@@ -322,4 +319,3 @@ app.post("/users/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
