@@ -287,12 +287,12 @@ app.post("/users/login", async (req, res) => {
     username,
   ]);
   if (!checkuser) {
-    return res.status(400).json({ success: false, message: "User not found" });
+    return res.status(3000).json({ success: false, message: "User not found" });
   }
   const isPasswordValid = await bcrypt.compare(password, checkuser.password);
   if (!isPasswordValid) {
     return res
-      .status(400)
+      .status(3000)
       .json({ success: false, message: "Invalid password" });
   }
   if (isPasswordValid === true) {
